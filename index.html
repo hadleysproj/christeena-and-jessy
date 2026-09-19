@@ -27,6 +27,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            color-scheme: light; /* Force light mode rendering across mobile/desktop browsers */
         }
 
         html, body {
@@ -34,7 +35,7 @@
             min-height: 100%;
             min-height: 100dvh;
             font-family: 'Playfair Display', serif;
-            background-color: var(--pearl-bg);
+            background-color: var(--pearl-bg) !important;
             color: var(--text-primary);
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
@@ -269,7 +270,6 @@
             line-height: 1.6;
         }
 
-        /* Couple Section */
         .couple-names-section {
             margin: 2.5rem 0;
         }
@@ -310,7 +310,6 @@
             line-height: 1;
         }
 
-        /* Date Banner */
         .save-date-banner {
             border-top: 1px solid var(--border-soft);
             border-bottom: 1px solid var(--border-soft);
@@ -342,7 +341,6 @@
             text-transform: uppercase;
         }
 
-        /* Grid for Events */
         .event-details-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -388,7 +386,6 @@
             text-transform: uppercase;
         }
 
-        /* Hosts Section */
         .hosts-section {
             margin-top: 3rem;
             padding-top: 2rem;
@@ -410,7 +407,6 @@
             letter-spacing: 1px;
         }
 
-        /* Actions Bar */
         .actions-bar {
             margin-top: 2.5rem;
             display: flex;
@@ -547,7 +543,6 @@
                 Your gracious presence is solicited on the auspicious occasion of the marriage of our only daughter
             </p>
 
-            <!-- Couple Section -->
             <div class="couple-names-section">
                 <div class="full-name">Dr. Christeena Sahaja</div>
                 <div class="qualification">Doctor of Pharmacy, PGDHM</div>
@@ -560,14 +555,12 @@
                 <div class="parentage">Youngest S/o. Mrs. &amp; Mr. Gomasa Salomi - Daniel</div>
             </div>
 
-            <!-- Date Banner -->
             <div class="save-date-banner">
                 <span class="time-text">SAVE THE DATE</span>
                 <span class="date-badge-large">OCTOBER 14th 2026</span>
                 <span class="time-text">11:00 A.M.</span>
             </div>
 
-            <!-- Event Details -->
             <div class="event-details-grid">
                 <div class="event-box">
                     <h3>Marriage Service</h3>
@@ -588,7 +581,6 @@
                 </div>
             </div>
 
-            <!-- Hosts Section -->
             <div class="hosts-section">
                 <div class="host-block">
                     <strong>Invited By:</strong>
@@ -601,7 +593,6 @@
                 </div>
             </div>
 
-            <!-- Actions Bar -->
             <div class="actions-bar">
                 <a href="https://maps.google.com/?q=CSI+Church+Gajulpet+Nirmal" target="_blank" class="btn-action">
                     <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -611,7 +602,7 @@
                     <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     Divya Gardens Map
                 </a>
-                <button class="btn-action btn-nav" id="btn-back-intro" data-target="intro-screen" style="background: var(--emerald-deep); border-color: var(--bronze-accent);">
+                <button class="btn-action btn-nav" data-target="intro-screen" style="background: var(--emerald-deep); border-color: var(--bronze-accent);">
                     ← Back to Cover
                 </button>
             </div>
@@ -658,6 +649,22 @@
             }
         });
 
+        // Kill music immediately if the user minimizes the browser, switches tabs, 
+        // or removes/swipes away the page from the mobile app tray
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                bgAudio.pause();
+                bgAudio.currentTime = 0;
+                isPlaying = false;
+                updateAudioBtnState();
+            }
+        });
+
+        window.addEventListener('pagehide', () => {
+            bgAudio.pause();
+            bgAudio.currentTime = 0;
+        });
+
         // Full-Viewport Water Ripple Animation Engine
         const canvas = document.getElementById('ripple-canvas');
         const ctx = canvas.getContext('2d');
@@ -675,7 +682,6 @@
                 x: x,
                 y: y,
                 radius: 10,
-                // Ensures ripple expands completely across the entire viewport corners
                 maxRadius: Math.hypot(window.innerWidth, window.innerHeight),
                 opacity: 0.6
             });
@@ -686,19 +692,17 @@
             
             for (let i = ripples.length - 1; i >= 0; i--) {
                 let r = ripples[i];
-                r.radius += 16; // Expands outward smoothly across the page
-                r.opacity *= 0.95; // Gentle fade out
+                r.radius += 16;
+                r.opacity *= 0.95;
 
                 ctx.save();
                 
-                // Primary outer ripple ring
                 ctx.beginPath();
                 ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
                 ctx.strokeStyle = `rgba(197, 168, 128, ${r.opacity})`;
                 ctx.lineWidth = 3;
                 ctx.stroke();
                 
-                // Secondary inner ripple ring for layered water effect
                 ctx.beginPath();
                 ctx.arc(r.x, r.y, Math.max(0, r.radius - 35), 0, Math.PI * 2);
                 ctx.strokeStyle = `rgba(20, 56, 46, ${r.opacity * 0.5})`;
@@ -726,24 +730,21 @@
 
                 if (targetScreen === currentScreen) return;
 
-                // Trigger ripple originating exactly from the clicked button's center across the full viewport
                 const rect = btn.getBoundingClientRect();
                 const clickX = rect.left + rect.width / 2;
                 const clickY = rect.top + rect.height / 2;
                 addRipple(clickX, clickY);
 
-                // Start background music on first transition if not already playing
                 if (!isPlaying && targetId === 'main-screen') {
                     playMusic();
                 }
 
-                // Handle synchronized blur/fade transition
                 currentScreen.classList.remove('active');
                 currentScreen.classList.add('leaving');
 
                 setTimeout(() => {
                     currentScreen.classList.remove('leaving');
-                }, 1000); // Matches CSS transition-speed duration
+                }, 1000);
 
                 targetScreen.classList.add('active');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
