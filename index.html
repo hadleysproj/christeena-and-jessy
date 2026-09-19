@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation | Dr. Christeena Sahaja & Dr. Jessy Jayasurya</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel+Decorative:wght@400;600;700&family=Cinzel:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --emerald-deep: #03221F;
+            --emerald-main: #0B4842;
+            --teal-cyan-dark: #07383B;
+            --gold-accent: #C5A059;
+            --gold-light: #E5C378;
+            --gold-foil: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+            --cream-bg: #FAF7F2;
+            --pearl-glow: rgba(255, 253, 248, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.96);
+            --text-primary: #07383B;
+            --text-secondary: #0B4842;
+            --text-muted: #3D6260;
+            --transition-speed: 0.9s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            min-height: 100vh;
+            width: 100%;
+            font-family: 'Cormorant Garamond', serif;
+            background-color: var(--cream-bg);
+            /* Soft pearl shimmer gradient with subtle gold flourish lattice pattern */
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.98) 0%, transparent 45%),
+                radial-gradient(circle at 85% 20%, rgba(229, 195, 120, 0.16) 0%, transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(245, 238, 225, 0.85) 0%, transparent 60%),
+                radial-gradient(circle at 80% 85%, rgba(197, 160, 89, 0.12) 0%, transparent 45%),
+                url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c5a059' fill-opacity='0.04'%3E%3Cpath d='M40 0l40 40-40 40L0 40zM40 10L10 40l30 30 30-30z'/%3E%3Cpath d='M40 20a20 20 0 1 0 0 40 20 20 0 0 0 0-40zm0 6a14 14 0 1 1 0 28 14 14 0 0 1 0-28z'/%3E%3C/g%3E%3C/svg%3E");
+            background-attachment: fixed;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .audio-control-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+        }
+
+        .audio-control {
+            background: #FFFFFF;
+            border: 1.5px solid var(--gold-accent);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(7, 56, 59, 0.12);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .audio-control:hover {
+            transform: scale(1.08);
+            background: var(--teal-cyan-dark);
+            border-color: var(--gold-light);
+        }
+
+        .audio-control:hover svg {
+            fill: #FFFFFF;
+            stroke: #FFFFFF;
+        }
+
+        .audio-control svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--teal-cyan-dark);
+            transition: all 0.3s ease;
+        }
+
+        .audio-control.playing {
+            animation: pulse-border 2.2s infinite;
+            background: var(--teal-cyan-dark);
+            border-color: var(--gold-light);
+        }
+
+        .audio-control.playing svg {
+            fill: #FFFFFF;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.5); }
+            70% { box-shadow: 0 0 0 14px rgba(197, 160, 89, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity var(--transition-speed) ease-in-out, visibility var(--transition-speed) ease-in-out;
+            padding: 2.5rem 1rem;
+        }
+
+        #intro-screen {
+            background-color: var(--cream-bg);
+            opacity: 1;
+            visibility: visible;
+            text-align: center;
+            z-index: 20;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        #intro-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .intro-frame {
+            border: 1px solid var(--gold-accent);
+            outline: 1px solid rgba(7, 56, 59, 0.3);
+            outline-offset: 8px;
+            padding: 4rem 2.5rem;
+            max-width: 700px;
+            width: 92%;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(7, 56, 59, 0.08), 0 0 40px rgba(229, 195, 120, 0.18);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 4px;
+        }
+
+        .corner-flourish {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            border: 2px solid var(--gold-accent);
+        }
+        .tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+        .tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+        .bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+        .br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+        .verse {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            color: var(--teal-cyan-dark);
+            font-size: 1.25rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            font-weight: 500;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+            letter-spacing: 0.02em;
+        }
+
+        .verse-ref {
+            display: block;
+            font-family: 'Cinzel', serif;
+            font-style: normal;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            margin-top: 12px;
+            color: var(--gold-accent);
+            text-transform: uppercase;
+        }
+
+        .intro-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 2.2rem;
+            color: var(--teal-cyan-dark);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            line-height: 1.35;
+            letter-spacing: 0.04em;
+        }
+
+        .and-symbol {
+            font-family: 'Alex Brush', cursive;
+            font-size: 3.4rem;
+            color: var(--gold-accent);
+            display: block;
+            margin: -0.2rem 0;
+            font-weight: normal;
+        }
+
+        .date-badge {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 4px;
+            color: var(--teal-cyan-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            text-transform: uppercase;
+        }
+
+        .btn-open {
+            margin-top: 2.8rem;
+            padding: 16px 48px;
+            background: var(--teal-cyan-dark);
+            border: 1px solid var(--gold-accent);
+            color: #FFFFFF;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 24px rgba(7, 56, 59, 0.18);
+        }
+
+        .btn-open:hover {
+            background: var(--emerald-deep);
+            border-color: var(--gold-light);
+            box-shadow: 0 12px 30px rgba(7, 56, 59, 0.28);
+            transform: translateY(-2px);
+        }
+
+        #main-screen {
+            opacity: 0;
+            visibility: hidden;
+            position: relative;
+            padding-top: 5rem;
+            padding-bottom: 6rem;
+            z-index: 10;
+        }
+
+        #main-screen.fade-in {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .invitation-card {
+            max-width: 900px;
+            width: 100%;
+            background: var(--card-bg);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 30px 70px rgba(7, 56, 59, 0.09), 0 0 50px rgba(229, 195, 120, 0.2);
+            border: 1px solid var(--gold-accent);
+            padding: 4.5rem 3.5rem;
+            text-align: center;
+            position: relative;
+            margin: 0 auto;
+            border-radius: 4px;
+        }
+
+        .card-header {
+            margin-bottom: 2.2rem;
+        }
+
+        .cross-icon {
+            width: 26px;
+            height: 38px;
+            margin: 0 auto 1.2rem auto;
+            display: block;
+        }
+
+        .solicitation {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: var(--teal-cyan-dark);
+            font-weight: 500;
+            margin-bottom: 2rem;
+            letter-spacing: 0.02em;
+        }
+
+        .couple-names-section {
+            margin: 2.8rem 0;
+        }
+
+        .full-name {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 2.2rem;
+            color: var(--teal-cyan-dark);
+            font-weight: 700;
+            line-height: 1.25;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.03em;
+        }
+
+        .qualification {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            color: var(--emerald-main);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .parentage {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 1.8rem;
+            line-height: 1.6;
+        }
+
+        .with-text {
+            font-family: 'Alex Brush', cursive;
+            font-size: 3.5rem;
+            color: var(--gold-accent);
+            margin: 1rem 0;
+            line-height: 1;
+        }
+
+        .save-date-banner {
+            border-top: 1px solid var(--gold-accent);
+            border-bottom: 1px solid var(--gold-accent);
+            padding: 1.4rem 0;
+            margin: 3rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            background: rgba(244, 248, 248, 0.6);
+        }
+
+        .date-badge-large {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--teal-cyan-dark);
+            font-weight: 700;
+            padding: 0 1.5rem;
+            border-left: 2px solid var(--gold-accent);
+            border-right: 2px solid var(--gold-accent);
+            letter-spacing: 2px;
+        }
+
+        .time-text {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            letter-spacing: 3px;
+            color: var(--teal-cyan-dark);
+            font-weight: 600;
+        }
+
+        .event-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2.8rem;
+            text-align: left;
+        }
+
+        .event-box {
+            background: rgba(244, 248, 248, 0.6);
+            border: 1px solid rgba(197, 160, 89, 0.6);
+            padding: 2.2rem 2rem;
+            border-radius: 4px;
+        }
+
+        .event-box h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--teal-cyan-dark);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid var(--gold-accent);
+            padding-bottom: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .event-box p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+            margin-bottom: 0.4rem;
+        }
+
+        .event-box .time-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--emerald-main);
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .time-icon {
+            width: 16px;
+            height: 16px;
+            stroke: var(--emerald-main);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .clergy-section {
+            margin-top: 3.8rem;
+            border-top: 1px dashed var(--gold-accent);
+            padding-top: 2.8rem;
+            text-align: center;
+        }
+
+        .clergy-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            color: var(--emerald-main);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1.8rem;
+        }
+
+        .bishop-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--teal-cyan-dark);
+            margin-bottom: 0.4rem;
+            letter-spacing: 1px;
+        }
+
+        .bishop-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .clergy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.4rem;
+            text-align: center;
+        }
+
+        .clergy-card {
+            background: #FFFFFF;
+            border: 1px solid rgba(7, 56, 59, 0.2);
+            padding: 1.4rem 1.2rem;
+            border-radius: 4px;
+        }
+
+        .clergy-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--teal-cyan-dark);
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.5px;
+        }
+
+        .clergy-role {
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.45;
+        }
+
+        .hosts-section {
+            margin-top: 3.5rem;
+            padding-top: 2.2rem;
+            border-top: 1px solid var(--gold-accent);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            font-size: 1.1rem;
+            text-align: left;
+        }
+
+        .host-block strong {
+            color: var(--teal-cyan-dark);
+            font-family: 'Cinzel', serif;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+
+        .actions-bar {
+            margin-top: 3.5rem;
+            display: flex;
+            gap: 1.2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 14px 28px;
+            background: var(--teal-cyan-dark);
+            border: 1px solid var(--gold-accent);
+            color: #FFFFFF;
+            font-size: 0.8rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.35s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 16px rgba(7, 56, 59, 0.15);
+        }
+
+        .btn-action:hover {
+            background: var(--emerald-deep);
+            border-color: var(--gold-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(7, 56, 59, 0.25);
+        }
+
+        .btn-action svg {
+            width: 15px;
+            height: 15px;
+            stroke: var(--gold-light);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .ornate-divider {
+            margin: 2rem auto;
+            width: 160px;
+            height: 1px;
+            background: var(--gold-accent);
+            position: relative;
+        }
+        .ornate-divider::after {
+            content: '❖';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #FFFFFF;
+            padding: 0 12px;
+            color: var(--gold-accent);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .event-details-grid { grid-template-columns: 1fr; }
+            .invitation-card { padding: 3rem 1.5rem; }
+            .full-name { font-size: 1.7rem; }
+            .intro-title { font-size: 1.7rem; }
+            .hosts-section { flex-direction: column; text-align: center; }
+            .host-block { text-align: center !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-audio" loop preload="auto">
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Floating Audio Play/Pause Button -->
+    <div class="audio-control-container">
+        <button class="audio-control" id="audio-toggle" aria-label="Toggle Music" title="Play / Mute Music">
+            <svg id="music-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+        </button>
+    </div>
+
+    <section id="intro-screen" class="screen">
+        <div class="intro-frame">
+            <div class="corner-flourish tl"></div>
+            <div class="corner-flourish tr"></div>
+            <div class="corner-flourish bl"></div>
+            <div class="corner-flourish br"></div>
+
+            <div class="verse">
+                "And over all these virtues put on love, which binds them all together in perfect unity."
+                <span class="verse-ref">Colossians 3:14</span>
+            </div>
+
+            <div class="ornate-divider"></div>
+
+            <h1 class="intro-title">
+                Dr. Christeena Sahaja
+                <span class="and-symbol">&amp;</span>
+                Dr. Jessy Jayasurya
+            </h1>
+
+            <div class="date-badge">
+                Wednesday • October 14, 2026
+            </div>
+
+            <button class="btn-open" id="btn-open-invitation">Open Invitation</button>
+        </div>
+    </section>
+
+    <section id="main-screen" class="screen">
+        <div class="invitation-card">
+            
+            <div class="card-header">
+                <!-- SVG Christian Cross Asset -->
+                <svg class="cross-icon" viewBox="0 0 24 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.5 0H14.5V10.5H24V15.5H14.5V36H9.5V15.5H0V10.5H9.5V0Z" fill="#C5A059"/>
+                </svg>
+
+                <div class="verse" style="margin-bottom: 1.8rem;">
+                    "And over all these virtues put on love, which binds them all together in perfect unity."
+                    <span class="verse-ref">Colossians 3:14</span>
+                </div>
+                
+                <h2 style="font-family: 'Cinzel', serif; color: var(--teal-cyan-dark); font-size: 1.4rem; letter-spacing: 4px; margin-bottom: 1.2rem; font-weight: 700;">
+                    HOLY MATRIMONY
+                </h2>
+                <p class="solicitation">
+                    Your gracious presence is solicited on the auspicious occasion of the marriage of our only daughter
+                </p>
+            </div>
+
+            <!-- Couple Names Section -->
+            <div class="couple-names-section">
+                <!-- Bride Details -->
+                <div class="full-name">Dr. Christeena Sahaja</div>
+                <div class="qualification">Doctor of Pharmacy, PGDHM</div>
+                <div class="parentage">Daughter of Mrs. G. Prameela (Rtd. SA, Edu Dept.) &amp; Mr. G. Sanjeeva Rao (Rtd. Bank Manager, TGB, MMGS - II)</div>
+                
+                <div class="with-text">with</div>
+
+                <!-- Groom Details -->
+                <div class="full-name">Dr. Jessy Jayasurya</div>
+                <div class="qualification">BDS, PGDHM</div>
+                <div class="parentage">Youngest S/o. Mrs. &amp; Mr. Gomasa Salomi - Daniel</div>
+            </div>
+
+            <!-- Date Banner -->
+            <div class="save-date-banner">
+                <span class="time-text">SAVE THE DATE</span>
+                <span class="date-badge-large">OCTOBER 14th 2026</span>
+                <span class="time-text">11:00 A.M.</span>
+            </div>
+
+            <div class="event-details-grid">
+                <div class="event-box">
+                    <h3>Marriage Service</h3>
+                    <div class="time-row">
+                        <svg class="time-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>11:00 A.M.</span>
+                    </div>
+                    <p><strong>Venue:</strong></p>
+                    <p>CSI Church</p>
+                    <p>Gajulpet, Nirmal</p>
+                </div>
+
+                <div class="event-box">
+                    <h3>Reception &amp; Lunch</h3>
+                    <div class="time-row">
+                        <svg class="time-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>From 1:30 P.M. onwards</span>
+                    </div>
+                    <p><strong>Venue:</strong></p>
+                    <p>Divya Gardens</p>
+                    <p>Divya Nagar, Nirmal</p>
+                </div>
+            </div>
+
+            <div class="clergy-section">
+                <div class="clergy-title">To Be Solemnized By</div>
+                <div class="bishop-title">The most Rev. Prof. Dr. K. Reuben Mark</div>
+                <div class="bishop-subtitle">Moderator CSI, Bishop in Medak Diocese</div>
+
+                <div class="clergy-grid">
+                    <div class="clergy-card">
+                        <div class="clergy-name">Rev. Dr. T. Bhaskar</div>
+                        <div class="clergy-role">Vice Chairman, Medak Diocese &amp; Presbyter-in-charge, CSI Wesley Church, Ramkote, Hyd.</div>
+                    </div>
+                    <div class="clergy-card">
+                        <div class="clergy-name">Rev. Dr. K. James Cecil Victor</div>
+                        <div class="clergy-role">Presbyter-in-charge, St. Paul's CSI Church, Sanathnagar, Hyd.<br>Ministerial Board Convenor, Medak Diocese</div>
+                    </div>
+                    <div class="clergy-card">
+                        <div class="clergy-name">Rev. Mothe Prasad</div>
+                        <div class="clergy-role">Presbyter-in-charge<br>CSI Nirmal Pastorate</div>
+                    </div>
+                    <div class="clergy-card">
+                        <div class="clergy-name">Rev. Ch. George</div>
+                        <div class="clergy-role">Chairman Godavari DCC<br>Presbyter-in-charge, CSI Nizamabad</div>
+                    </div>
+                    <div class="clergy-card">
+                        <div class="clergy-name">Rev. S.L. Susheel Kumar</div>
+                        <div class="clergy-role">Presbyter-in-charge<br>CSI All Saints Church, Balajinagar, Hyd.</div>
+                    </div>
+                    <div class="clergy-card">
+                        <div class="clergy-name">Pastor MRG Emmanuel</div>
+                        <div class="clergy-role">BCG Church Patancheru, Hyd.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hosts-section">
+                <div class="host-block">
+                    <strong>Invited By:</strong>
+                    <p><strong>Mrs. G. Prameela</strong> (Rtd. SA, Edu Dept.)</p>
+                    <p><strong>Mr. G. Sanjeeva Rao</strong> (Rtd. Bank Manager, TGB, MMGS - II)</p>
+                </div>
+                <div class="host-block" style="text-align: right;">
+                    <strong>With best compliments from:</strong>
+                    <p>Near &amp; Dear...</p>
+                </div>
+            </div>
+
+            <div class="actions-bar">
+                <button class="btn-action" id="btn-calendar">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Add to Calendar
+                </button>
+                <a href="https://maps.google.com/?q=CSI+Church+Gajulpet+Nirmal" target="_blank" class="btn-action">
+                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    CSI Church Map
+                </a>
+                <a href="https://maps.google.com/?q=Divya+Gardens+Nirmal" target="_blank" class="btn-action">
+                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Divya Gardens Map
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        const bgAudio = document.getElementById('bg-audio');
+        const audioToggleBtn = document.getElementById('audio-toggle');
+
+        let isPlaying = false;
+
+        function updateAudioBtnState() {
+            if (isPlaying) {
+                audioToggleBtn.classList.add('playing');
+            } else {
+                audioToggleBtn.classList.remove('playing');
+            }
+        }
+
+        function playMusic() {
+            bgAudio.play().then(() => {
+                isPlaying = true;
+                updateAudioBtnState();
+            }).catch(err => {
+                console.log("Audio play attempt finished:", err);
+                isPlaying = false;
+                updateAudioBtnState();
+            });
+        }
+
+        function pauseMusic() {
+            bgAudio.pause();
+            isPlaying = false;
+            updateAudioBtnState();
+        }
+
+        audioToggleBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                pauseMusic();
+            } else {
+                playMusic();
+            }
+        });
+
+        // Navigation & Screen Transition logic
+        const introScreen = document.getElementById('intro-screen');
+        const mainScreen = document.getElementById('main-screen');
+        const openBtn = document.getElementById('btn-open-invitation');
+
+        function transitionToMain() {
+            if (introScreen.classList.contains('fade-out')) return;
+            introScreen.classList.add('fade-out');
+            
+            setTimeout(() => {
+                mainScreen.classList.add('fade-in');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 450);
+
+            // Play background music when visitor clicks "Open Invitation"
+            playMusic();
+        }
+
+        openBtn.addEventListener('click', transitionToMain);
+
+        document.getElementById('btn-calendar').addEventListener('click', () => {
+            const icsData = 
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Wedding Invitation//EN
+BEGIN:VEVENT
+SUMMARY:Wedding: Dr. Christeena Sahaja & Dr. Jessy Jayasurya
+DESCRIPTION:Holy Matrimony at CSI Church Gajulpet (11:00 AM) followed by Reception & Lunch at Divya Gardens, Nirmal (1:30 PM).
+LOCATION:CSI Church Gajulpet / Divya Gardens Nirmal
+DTSTART:20261014T053000Z
+DTEND:20261014T113000Z
+END:VEVENT
+END:VCALENDAR`;
+
+            const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', 'Wedding_Christeena_and_Jessy.ics');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    </script>
+</body>
+</html>
